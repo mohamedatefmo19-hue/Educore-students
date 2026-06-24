@@ -51,7 +51,7 @@
       border-radius: 14px;
     }
     body.dark-mode .sidebar-logo i { background: #1f2a40; color: #6b9ef0; }
-    .sidebar-logo span { font-weight: 700; font-size: 1.5rem; letter-spacing: -0.5px; }
+    .sidebar-logo span { font-weight: 700; font-size: 1.5rem; }
     .sidebar-logo span small { color: #2a7de1; }
     .sidebar nav { flex: 1; }
     .sidebar nav a {
@@ -189,34 +189,17 @@
     }
     .stat-card .value { font-size: 1.6rem; font-weight: 700; margin-top: 0.2rem; }
 
-    .row-2col {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
     .card-panel {
       background: #ffffff;
       border-radius: 20px;
       padding: 1.2rem 1.2rem 1.5rem;
       border: 1px solid #eef2f8;
       box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      margin-bottom: 1.5rem;
     }
     body.dark-mode .card-panel { background: #1a1f2b; border-color: #2a3442; }
     .card-panel h3 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
     .card-panel h3 i { color: #2a7de1; }
-    .chart-container { height: 180px; }
-
-    .activity-item {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      padding: 0.7rem 0;
-      border-bottom: 1px solid #f0f4fa;
-      font-size: 0.9rem;
-    }
-    body.dark-mode .activity-item { border-bottom-color: #2a3442; }
-    .activity-item i { width: 1.8rem; color: #2a7de1; }
 
     .course-card {
       background: #ffffff;
@@ -254,11 +237,10 @@
       overflow: hidden;
       margin-top: 0.4rem;
     }
-    .progress-fill {
-      height: 100%;
-      background: #2a7de1;
-      border-radius: 10px;
-    }
+    .progress-fill { height: 100%; background: #2a7de1; border-radius: 10px; }
+
+    .empty-state { text-align: center; padding: 2rem; color: #8a9bb5; }
+    .empty-state i { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; }
 
     .badge-notif {
       position: absolute;
@@ -271,9 +253,6 @@
       border-radius: 30px;
       font-weight: 700;
     }
-
-    .empty-state { text-align: center; padding: 2rem; color: #8a9bb5; }
-    .empty-state i { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; }
 
     .toast-container {
       position: fixed;
@@ -301,7 +280,6 @@
     .toast.error { border-right: 4px solid #EF4444; }
     @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    @media (max-width: 992px) { .row-2col { grid-template-columns: 1fr; } }
     @media (max-width: 768px) {
       .hamburger { display: block; }
       .main { margin-right: 0; }
@@ -352,41 +330,18 @@
         </div>
         <button id="notifBtn" style="position:relative;">
           <i class="fas fa-bell"></i>
-          <span class="badge-notif" id="notifBadge">3</span>
+          <span class="badge-notif" id="notifBadge">0</span>
         </button>
         <button><i class="fas fa-user-circle" style="font-size:1.6rem;"></i></button>
       </div>
     </header>
 
     <section class="stats-grid" id="statsGrid">
-      <div class="stat-card">
-        <div class="stat-icon blue"><i class="fas fa-book-open"></i></div>
-        <div class="stat-info"><div class="label">الكورسات المسجلة</div><div class="value" id="totalCourses">—</div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
-        <div class="stat-info"><div class="label">الدروس المكتملة</div><div class="value" id="completedLessons">—</div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon amber"><i class="fas fa-clock"></i></div>
-        <div class="stat-info"><div class="label">قيد الدراسة</div><div class="value" id="activeCourses">—</div></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon red"><i class="fas fa-star"></i></div>
-        <div class="stat-info"><div class="label">متوسط التقدم</div><div class="value" id="avgProgress">—</div></div>
-      </div>
+      <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-book-open"></i></div><div class="stat-info"><div class="label">الكورسات المسجلة</div><div class="value" id="totalCourses">0</div></div></div>
+      <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div class="stat-info"><div class="label">الدروس المكتملة</div><div class="value" id="completedLessons">0</div></div></div>
+      <div class="stat-card"><div class="stat-icon amber"><i class="fas fa-clock"></i></div><div class="stat-info"><div class="label">قيد الدراسة</div><div class="value" id="activeCourses">0</div></div></div>
+      <div class="stat-card"><div class="stat-icon red"><i class="fas fa-star"></i></div><div class="stat-info"><div class="label">متوسط التقدم</div><div class="value" id="avgProgress">0%</div></div></div>
     </section>
-
-    <div class="row-2col">
-      <div class="card-panel">
-        <h3><i class="fas fa-chart-line"></i> <span data-key="progress">تقدمي الدراسي</span></h3>
-        <div class="chart-container"><canvas id="progressChart"></canvas></div>
-      </div>
-      <div class="card-panel">
-        <h3><i class="fas fa-clock"></i> <span data-key="recent">آخر النشاطات</span></h3>
-        <div id="recentActivities"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><br>جاري التحميل...</div></div>
-      </div>
-    </div>
 
     <div class="card-panel">
       <h3><i class="fas fa-book-open"></i> <span data-key="activeCourses">كورساتي النشطة</span></h3>
@@ -400,7 +355,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
     import {
-      getFirestore, collection, getDocs, onSnapshot, query, orderBy, doc, getDoc
+      getFirestore, collection, getDocs, onSnapshot, doc, getDoc
     } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -418,9 +373,7 @@
     const db = getFirestore(app);
 
     let STUDENT_ID = '';
-    let progressChart = null;
 
-    // حماية المسار
     onAuthStateChanged(auth, (user) => {
       if (!user) window.location.href = 'login.html';
       else {
@@ -464,24 +417,24 @@
         const enrollSnap = await getDocs(collection(db, base, 'enrollments'));
         const totalCourses = enrollSnap.size;
         
-        let completedLessons = 0, totalLessons = 0, activeCount = 0;
+        let completedLessons = 0;
+        let activeCount = 0;
         const coursesData = [];
         
         for (const enrollDoc of enrollSnap.docs) {
           const enrollment = enrollDoc.data();
           const courseId = enrollment.courseId;
-          
-          // جلب بيانات الكورس من المدرس
           const teacherId = enrollment.teacherId;
+          
           if (teacherId && courseId) {
             try {
+              // محاولة جلب الكورس – إذا فشلت (بسبب القواعد)، نتخطى هذا الكورس
               const courseDoc = await getDoc(doc(db, 'teachers', teacherId, 'courses', courseId));
               if (courseDoc.exists()) {
                 const course = courseDoc.data();
                 const progress = enrollment.progress || 0;
                 if (progress > 0 && progress < 100) activeCount++;
                 completedLessons += Math.round((progress / 100) * (course.totalLessons || 10));
-                totalLessons += (course.totalLessons || 10);
                 
                 coursesData.push({
                   id: courseId,
@@ -489,11 +442,13 @@
                   title: course.title || 'كورس بدون عنوان',
                   subject: course.subject || '',
                   grade: course.grade || '',
-                  progress: progress,
-                  thumbnail: course.thumbnail || null
+                  progress: progress
                 });
               }
-            } catch (e) { /* skip */ }
+            } catch (e) {
+              // لا شيء – تخطي الكورس الذي لا يمكن الوصول إليه
+              console.warn('Could not access course:', courseId);
+            }
           }
         }
 
@@ -504,71 +459,29 @@
         const avgProgress = totalCourses > 0 ? Math.round(coursesData.reduce((s, c) => s + c.progress, 0) / totalCourses) : 0;
         document.getElementById('avgProgress').textContent = avgProgress + '%';
 
-        // رسم بياني للتقدم
-        updateChart(coursesData);
-
-        // عرض الكورسات النشطة
+        // عرض الكورسات
         renderActiveCourses(coursesData);
-
-        // آخر النشاطات
-        const activitiesSnap = await getDocs(query(collection(db, base, 'activities'), orderBy('timestamp', 'desc')));
-        const activities = [];
-        activitiesSnap.forEach(doc => activities.push(doc.data()));
-        const recentDiv = document.getElementById('recentActivities');
-        if (activities.length === 0) {
-          recentDiv.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><br>لا توجد نشاطات حديثة</div>';
-        } else {
-          recentDiv.innerHTML = activities.slice(0, 5).map(a => `
-            <div class="activity-item"><i class="fas ${a.icon || 'fa-circle'}"></i> ${a.text || 'نشاط'}</div>
-          `).join('');
-        }
 
       } catch (error) {
         console.error('Dashboard error:', error);
-        showToast('فشل تحميل البيانات', 'error');
+        showToast('فشل تحميل البيانات. تأكد من القواعد.', 'error');
       }
-    }
-
-    function updateChart(coursesData) {
-      const ctx = document.getElementById('progressChart')?.getContext('2d');
-      if (!ctx) return;
-      if (progressChart) progressChart.destroy();
-      
-      const labels = coursesData.map(c => c.title.length > 15 ? c.title.substring(0, 15) + '...' : c.title);
-      const data = coursesData.map(c => c.progress);
-      
-      progressChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels.length ? labels : ['لا توجد كورسات'],
-          datasets: [{
-            label: 'نسبة التقدم %',
-            data: data.length ? data : [0],
-            backgroundColor: 'rgba(42,125,225,0.7)',
-            borderColor: '#2a7de1',
-            borderWidth: 1,
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, max: 100 } }
-        }
-      });
     }
 
     function renderActiveCourses(coursesData) {
       const container = document.getElementById('activeCoursesList');
-      const active = coursesData.filter(c => c.progress < 100);
       
-      if (active.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-book-open"></i><br>لا توجد كورسات نشطة حالياً</div>';
+      if (coursesData.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-book-open"></i>
+            <p>لا توجد كورسات نشطة حالياً</p>
+            <a href="browse-teachers.html" style="color: #2a7de1; margin-top: 0.5rem; display: inline-block;">تصفح المدرسين</a>
+          </div>`;
         return;
       }
 
-      container.innerHTML = active.map(c => `
+      container.innerHTML = coursesData.map(c => `
         <div class="course-card" onclick="window.location.href='course-details.html?id=${c.id}&teacher=${c.teacherId}'">
           <div class="course-icon"><i class="fas fa-book-open"></i></div>
           <div class="course-info">
@@ -592,37 +505,10 @@
     const langToggle = document.getElementById('langToggle');
     const darkToggle = document.getElementById('darkToggle');
     const langLabel = document.getElementById('langLabel');
-    const mainEl = document.getElementById('mainContent');
 
     const translations = {
-      ar: {
-        dashboard: 'لوحة التحكم',
-        teachers: 'المدرسون',
-        courses: 'كورساتي',
-        assignments: 'الواجبات',
-        messages: 'الرسائل',
-        profile: 'الملف الشخصي',
-        settings: 'الإعدادات',
-        logout: 'تسجيل الخروج',
-        pageTitle: 'لوحة التحكم',
-        progress: 'تقدمي الدراسي',
-        recent: 'آخر النشاطات',
-        activeCourses: 'كورساتي النشطة'
-      },
-      en: {
-        dashboard: 'Dashboard',
-        teachers: 'Teachers',
-        courses: 'My Courses',
-        assignments: 'Assignments',
-        messages: 'Messages',
-        profile: 'Profile',
-        settings: 'Settings',
-        logout: 'Logout',
-        pageTitle: 'Dashboard',
-        progress: 'My Progress',
-        recent: 'Recent Activities',
-        activeCourses: 'My Active Courses'
-      }
+      ar: { dashboard: 'لوحة التحكم', teachers: 'المدرسون', courses: 'كورساتي', assignments: 'الواجبات', messages: 'الرسائل', profile: 'الملف الشخصي', settings: 'الإعدادات', logout: 'تسجيل الخروج', pageTitle: 'لوحة التحكم', activeCourses: 'كورساتي النشطة' },
+      en: { dashboard: 'Dashboard', teachers: 'Teachers', courses: 'My Courses', assignments: 'Assignments', messages: 'Messages', profile: 'Profile', settings: 'Settings', logout: 'Logout', pageTitle: 'Dashboard', activeCourses: 'My Active Courses' }
     };
 
     function applyLanguage(langCode) {
@@ -632,21 +518,6 @@
         if (t[key]) el.textContent = t[key];
       });
       document.getElementById('pageTitle').textContent = t.pageTitle;
-      if (langCode === 'ar') {
-        document.documentElement.lang = 'ar';
-        document.documentElement.dir = 'rtl';
-        mainEl.style.marginRight = '260px';
-        mainEl.style.marginLeft = '0';
-        document.getElementById('sidebar').style.borderLeft = '1px solid #e7edf5';
-        document.getElementById('sidebar').style.borderRight = 'none';
-      } else {
-        document.documentElement.lang = 'en';
-        document.documentElement.dir = 'ltr';
-        mainEl.style.marginRight = '0';
-        mainEl.style.marginLeft = '260px';
-        document.getElementById('sidebar').style.borderLeft = 'none';
-        document.getElementById('sidebar').style.borderRight = '1px solid #e7edf5';
-      }
     }
 
     langToggle.addEventListener('click', () => {
@@ -657,16 +528,9 @@
 
     darkToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
-      const isDark = document.body.classList.contains('dark-mode');
-      darkToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      darkToggle.innerHTML = document.body.classList.contains('dark-mode') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     });
 
-    document.getElementById('notifBtn').addEventListener('click', () => {
-      document.getElementById('notifBadge').style.display = 'none';
-      showToast('لديك 3 إشعارات غير مقروءة', 'info');
-    });
-
-    // تطبيق العربية افتراضيًا
     applyLanguage('ar');
     console.log('✅ لوحة تحكم الطالب جاهزة.');
   </script>
