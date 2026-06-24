@@ -1,1 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>EduCore · Student Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    body.dark-mode { background: #0b0e14; color: #eef2f6; }
 
+    .auth-card {
+      background: #ffffff;
+      max-width: 440px;
+      width: 100%;
+      padding: 2.5rem 2rem 2.2rem;
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    body.dark-mode .auth-card { background: #1a1f2b; }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.8rem;
+    }
+    .logo-icon {
+      font-size: 2rem;
+      color: #2a7de1;
+      background: #e8f0fe;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+    }
+    body.dark-mode .logo-icon { background: #2a3a5a; color: #6b9ef0; }
+    .logo-text { font-weight: 700; font-size: 1.6rem; letter-spacing: -0.5px; color: #0b1e33; }
+    body.dark-mode .logo-text { color: #eef2f6; }
+    .logo-text span { color: #2a7de1; }
+    .subhead { font-size: 0.9rem; color: #5e6f8d; margin-top: 0.2rem; font-weight: 500; }
+
+    .tab-switch {
+      display: flex;
+      margin-bottom: 1.8rem;
+      background: #f0f4fa;
+      border-radius: 14px;
+      padding: 4px;
+    }
+    body.dark-mode .tab-switch { background: #2a3442; }
+    .tab-btn {
+      flex: 1;
+      padding: 0.7rem;
+      border: none;
+      background: transparent;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #5e6f8d;
+    }
+    .tab-btn.active {
+      background: white;
+      color: #2a7de1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    body.dark-mode .tab-btn.active { background: #1a1f2b; color: #6b9ef0; }
+
+    .form-group { margin-bottom: 1.3rem; }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      color: #1f2a41;
+    }
+    body.dark-mode .form-group label { color: #d0dae8; }
+    .input-wrapper {
+      position: relative;
+    }
+    .input-wrapper i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8a9bb5;
+      font-size: 1rem;
+    }
+    .input-wrapper input {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 2.8rem;
+      border: 1.5px solid #dfe6f0;
+      border-radius: 14px;
+      font-size: 1rem;
+      background: #f9fbfe;
+      transition: 0.15s;
+      font-weight: 500;
+      color: #1a253a;
+    }
+    body.dark-mode .input-wrapper input {
+      background: #252d3d;
+      border-color: #3b465b;
+      color: #eef2f6;
+    }
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: #2a7de1;
+      box-shadow: 0 0 0 4px rgba(42,125,225,0.15);
+    }
+    .toggle-pwd {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #8a9bb5;
+      cursor: pointer;
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 0.9rem;
+      background: #2a7de1;
+      border: none;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 8px 20px -6px rgba(42,125,225,0.3);
+    }
+    .btn-primary:hover { background: #1a67c4; }
+    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.25);
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .message-box {
+      margin-top: 1.2rem;
+      padding: 0.8rem 1rem;
+      border-radius: 14px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .message-box.error { display: flex; background: #fde8e8; color: #b3403a; border-left: 5px solid #b3403a; }
+    .message-box.success { display: flex; background: #e3f5e9; color: #1f7840; border-left: 5px solid #1f7840; }
+    body.dark-mode .message-box.error { background: #3a2626; color: #f5b1b1; }
+    body.dark-mode .message-box.success { background: #1e3a2a; color: #8bddb0; }
+
+    .footer-lang {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: #6b7d9c;
+      border-top: 1px solid #e7edf5;
+      padding-top: 1.5rem;
+    }
+    body.dark-mode .footer-lang { border-top-color: #2f3b4f; color: #9aabbf; }
+    .link-btn {
+      background: none;
+      border: none;
+      font-weight: 600;
+      color: #2a7de1;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 480px) { .auth-card { padding: 1.8rem 1.2rem; } }
+    .rtl { direction: rtl; }
+    .rtl .input-wrapper i { left: auto; right: 1rem; }
+    .rtl .input-wrapper input { padding: 0.9rem 2.8rem 0.9rem 1rem; }
+    .rtl .toggle-pwd { right: auto; left: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="auth-card" id="authCard">
+    <!-- Logo -->
+    <div class="logo-area">
+      <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+      <div>
+        <div class="logo-text">Edu<span>Core</span></div>
+        <div class="subhead" id="subhead">Student Portal</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-switch">
+      <button class="tab-btn active" id="tabLogin">Sign In</button>
+      <button class="tab-btn" id="tabSignup">Sign Up</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" autocomplete="off">
+      <div class="form-group">
+        <label>Email</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="loginEmail" placeholder="student@example.com" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="loginPassword" placeholder="••••••••" required>
+          <button type="button" class="toggle-pwd" id="togglePwdLogin"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary" id="loginBtn">
+        <span id="loginBtnText">Sign in</span>
+        <span id="loginSpinner" style="display:none;"><span class="spinner"></span></span>
+      </button>
+    </form>
+
+    <!-- Sign Up Form (hidden by default) -->
+    <form id="signupForm" style="display:none;" autocomplete="off">
+      <div class="form-group">
+        <label>Full Name</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user"></i>
+          <input type="text" id="signupName" placeholder="Your name" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="signupEmail" placeholder="student@example.com" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="signupPassword" placeholder="Min 6 characters" required minlength="6">
+          <button type="button" class="toggle-pwd" id="togglePwdSignup"><i class="fas fa-eye"></i></button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="signupConfirm" placeholder="Re-enter password" required minlength="6">
+        </div>
+      </div>
+      <button type="submit" class="btn-primary" id="signupBtn">
+        <span id="signupBtnText">Create Account</span>
+        <span id="signupSpinner" style="display:none;"><span class="spinner"></span></span>
+      </button>
+    </form>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="message-box">
+      <i id="msgIcon" class="fas fa-info-circle"></i>
+      <span id="msgText"></span>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-lang">
+      <button class="link-btn" id="forgotPasswordBtn"><i class="fas fa-key"></i> Forgot password?</button>
+      <div style="display:flex; gap:1rem;">
+        <button class="link-btn" id="langToggle"><i class="fas fa-globe"></i> <span id="langLabel">EN</span></button>
+        <button class="link-btn" id="darkToggle" style="color:#6b7d9c;"><i class="fas fa-moon"></i> <span id="darkLabel">Dark</span></button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import {
+      getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+      sendPasswordResetEmail, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOBJ22snwOow8xfQnL2WmCusmyS8iWWlk",
+      authDomain: "educore-c3b42.firebaseapp.com",
+      projectId: "educore-c3b42",
+      storageBucket: "educore-c3b42.firebasestorage.app",
+      messagingSenderId: "750509780814",
+      appId: "1:750509780814:web:f57bddff39c7668b3cf81f",
+      measurementId: "G-LF317C03Q0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const messageBox = document.getElementById('messageBox');
+    const msgText = document.getElementById('msgText');
+    const msgIcon = document.getElementById('msgIcon');
+
+    function showMessage(text, type = 'error') {
+      messageBox.className = `message-box ${type}`;
+      msgText.textContent = text;
+      msgIcon.className = type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+      messageBox.style.display = 'flex';
+    }
+    function hideMessage() { messageBox.style.display = 'none'; messageBox.className = 'message-box'; }
+
+    function setLoading(btn, spinner, text, isLoading) {
+      btn.disabled = isLoading;
+      text.style.display = isLoading ? 'none' : 'inline';
+      spinner.style.display = isLoading ? 'inline' : 'none';
+    }
+
+    // Tab switching
+    tabLogin.addEventListener('click', () => {
+      tabLogin.classList.add('active');
+      tabSignup.classList.remove('active');
+      loginForm.style.display = 'block';
+      signupForm.style.display = 'none';
+      hideMessage();
+    });
+    tabSignup.addEventListener('click', () => {
+      tabSignup.classList.add('active');
+      tabLogin.classList.remove('active');
+      loginForm.style.display = 'none';
+      signupForm.style.display = 'block';
+      hideMessage();
+    });
+
+    // Toggle password
+    document.getElementById('togglePwdLogin').addEventListener('click', () => {
+      const pwd = document.getElementById('loginPassword');
+      const icon = document.querySelector('#togglePwdLogin i');
+      if (pwd.type === 'password') { pwd.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+      else { pwd.type = 'password'; icon.className = 'fas fa-eye'; }
+    });
+    document.getElementById('togglePwdSignup').addEventListener('click', () => {
+      const pwd = document.getElementById('signupPassword');
+      const icon = document.querySelector('#togglePwdSignup i');
+      if (pwd.type === 'password') { pwd.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+      else { pwd.type = 'password'; icon.className = 'fas fa-eye'; }
+    });
+
+    // Login
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessage();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      const btn = document.getElementById('loginBtn');
+      const text = document.getElementById('loginBtnText');
+      const spinner = document.getElementById('loginSpinner');
+      setLoading(btn, spinner, text, true);
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = 'dashboard.html';
+      } catch (error) {
+        let msg = 'Login failed.';
+        if (error.code === 'auth/user-not-found') msg = 'No user found with this email.';
+        else if (error.code === 'auth/wrong-password') msg = 'Incorrect password.';
+        showMessage(msg, 'error');
+      } finally {
+        setLoading(btn, spinner, text, false);
+      }
+    });
+
+    // Sign Up
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMessage();
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const confirm = document.getElementById('signupConfirm').value;
+
+      if (password !== confirm) { showMessage('Passwords do not match.', 'error'); return; }
+      if (password.length < 6) { showMessage('Password must be at least 6 characters.', 'error'); return; }
+
+      const btn = document.getElementById('signupBtn');
+      const text = document.getElementById('signupBtnText');
+      const spinner = document.getElementById('signupSpinner');
+      setLoading(btn, spinner, text, true);
+
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const userId = userCred.user.uid;
+        // Store student data
+        await setDoc(doc(db, 'students', userId, 'profile', 'info'), {
+          name, email, createdAt: serverTimestamp()
+        });
+        window.location.href = 'dashboard.html';
+      } catch (error) {
+        let msg = 'Sign up failed.';
+        if (error.code === 'auth/email-already-in-use') msg = 'This email is already registered.';
+        showMessage(msg, 'error');
+      } finally {
+        setLoading(btn, spinner, text, false);
+      }
+    });
+
+    // Forgot Password
+    document.getElementById('forgotPasswordBtn').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim() || document.getElementById('signupEmail').value.trim();
+      if (!email) { showMessage('Please enter your email address first.', 'error'); return; }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showMessage('Password reset email sent!', 'success');
+      } catch (error) {
+        showMessage('Unable to send reset email.', 'error');
+      }
+    });
+
+    // Language & Dark Mode
+    let lang = 'en', isDark = false;
+    const langToggle = document.getElementById('langToggle');
+    const darkToggle = document.getElementById('darkToggle');
+    const langLabel = document.getElementById('langLabel');
+    const darkLabel = document.getElementById('darkLabel');
+    const subhead = document.getElementById('subhead');
+    const authCard = document.getElementById('authCard');
+
+    function applyLanguage(l) {
+      lang = l;
+      if (l === 'ar') {
+        document.documentElement.lang = 'ar'; authCard.classList.add('rtl');
+        langLabel.textContent = 'AR'; subhead.textContent = 'بوابة الطالب';
+        document.getElementById('loginEmail').placeholder = 'البريد الإلكتروني';
+        document.getElementById('loginPassword').placeholder = '••••••••';
+        document.getElementById('signupName').placeholder = 'اسمك الكامل';
+        document.getElementById('signupEmail').placeholder = 'البريد الإلكتروني';
+        document.getElementById('signupPassword').placeholder = 'كلمة المرور';
+        document.getElementById('signupConfirm').placeholder = 'تأكيد كلمة المرور';
+        tabLogin.textContent = 'تسجيل الدخول'; tabSignup.textContent = 'إنشاء حساب';
+        document.getElementById('loginBtnText').textContent = 'تسجيل الدخول';
+        document.getElementById('signupBtnText').textContent = 'إنشاء حساب';
+        document.querySelector('label[for="loginEmail"]').textContent = 'البريد الإلكتروني';
+        document.querySelector('label[for="loginPassword"]').textContent = 'كلمة المرور';
+      } else {
+        document.documentElement.lang = 'en'; authCard.classList.remove('rtl');
+        langLabel.textContent = 'EN'; subhead.textContent = 'Student Portal';
+        tabLogin.textContent = 'Sign In'; tabSignup.textContent = 'Sign Up';
+        document.getElementById('loginBtnText').textContent = 'Sign in';
+        document.getElementById('signupBtnText').textContent = 'Create Account';
+      }
+    }
+    langToggle.addEventListener('click', () => applyLanguage(lang === 'en' ? 'ar' : 'en'));
+    darkToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      document.body.classList.toggle('dark-mode', isDark);
+      darkLabel.textContent = isDark ? 'Light' : 'Dark';
+      darkToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i> ' : '<i class="fas fa-moon"></i> ';
+      darkToggle.appendChild(document.createTextNode(darkLabel.textContent));
+    });
+
+    // Redirect if already logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = 'dashboard.html';
+    });
+
+    applyLanguage('en');
+  </script>
+</body>
+</html>
