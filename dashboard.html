@@ -1,1 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>EduCore · Student Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fc;
+      color: #0b1e33;
+      display: flex;
+      min-height: 100vh;
+    }
+    body.dark-mode { background:#0b0e14; color:#eef2f6; }
 
+    .sidebar {
+      width:260px; background:#fff; border-right:1px solid #e7edf5;
+      padding:2rem 1.2rem; display:flex; flex-direction:column;
+      position:fixed; top:0; left:0; bottom:0; z-index:1000;
+      transition: transform 0.3s; transform: translateX(0);
+    }
+    body.dark-mode .sidebar { background:#141a26; border-color:#2a3442; }
+    .sidebar.closed { transform: translateX(-100%); }
+    .sidebar-logo { display:flex; align-items:center; gap:0.7rem; margin-bottom:2.5rem; }
+    .sidebar-logo i { font-size:1.8rem; color:#2a7de1; background:#e8f0fe; padding:0.6rem; border-radius:14px; }
+    body.dark-mode .sidebar-logo i { background:#1f2a40; color:#6b9ef0; }
+    .sidebar-logo span { font-weight:700; font-size:1.5rem; letter-spacing:-0.5px; }
+    .sidebar-logo span small { color:#2a7de1; }
+    .sidebar nav { flex:1; }
+    .sidebar nav a {
+      display:flex; align-items:center; gap:0.8rem; padding:0.8rem 1rem;
+      border-radius:12px; color:#4a5b7a; text-decoration:none; font-weight:500;
+      transition:0.15s; margin-bottom:0.3rem;
+    }
+    body.dark-mode .sidebar nav a { color:#b0c0d4; }
+    .sidebar nav a i { width:1.4rem; }
+    .sidebar nav a:hover, .sidebar nav a.active { background:#eef4fe; color:#1a67c4; }
+    body.dark-mode .sidebar nav a:hover, body.dark-mode .sidebar nav a.active { background:#1f2a40; color:#6b9ef0; }
+    .sidebar-footer {
+      border-top:1px solid #e7edf5; padding-top:1.2rem; margin-top:0.5rem;
+      font-size:0.9rem; font-weight:600; color:#6b7d9c; cursor:pointer;
+      display:flex; align-items:center; gap:0.6rem;
+    }
+    body.dark-mode .sidebar-footer { border-color:#2a3442; }
+    .sidebar-footer:hover { color:#e74c3c; }
+    .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:999; }
+    .sidebar-overlay.show { display:block; }
+
+    .main { flex:1; margin-left:260px; padding:1.8rem 2rem 2.5rem; transition: margin-left 0.3s; }
+    .main.expanded { margin-left:0; }
+
+    .navbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:2rem; }
+    .navbar h1 { font-size:1.7rem; font-weight:700; }
+    .navbar-actions { display:flex; align-items:center; gap:1.2rem; }
+    .navbar-actions button { background:none; border:none; font-size:1.2rem; color:#4a5b7a; cursor:pointer; }
+    body.dark-mode .navbar-actions button { color:#b0c0d4; }
+    .navbar-actions button:hover { color:#2a7de1; }
+    .lang-dark { display:flex; gap:0.6rem; }
+    .lang-dark button { background:none; border:none; font-weight:600; color:#2a7de1; cursor:pointer; font-size:0.85rem; }
+    .lang-dark .dark-toggle { color:#6b7d9c; }
+    body.dark-mode .lang-dark .dark-toggle { color:#b0c0d4; }
+    .hamburger { display:none; background:none; border:none; font-size:1.5rem; color:#4a5b7a; cursor:pointer; }
+    body.dark-mode .hamburger { color:#b0c0d4; }
+
+    .welcome-card {
+      background:#fff; border-radius:20px; padding:1.5rem 2rem; margin-bottom:2rem;
+      border:1px solid #eef2f8; display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
+    }
+    body.dark-mode .welcome-card { background:#1a1f2b; border-color:#2a3442; }
+    .welcome-avatar {
+      width:60px; height:60px; border-radius:50%; background:#e8f0fe;
+      display:flex; align-items:center; justify-content:center;
+      font-size:2rem; color:#2a7de1; flex-shrink:0;
+    }
+    .welcome-info h2 { font-size:1.3rem; font-weight:700; }
+    .welcome-info p { color:#6b7d9c; font-size:0.9rem; margin-top:0.3rem; }
+
+    .stats-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:1.2rem; margin-bottom:2rem; }
+    .stat-card {
+      background:#fff; border-radius:20px; padding:1.2rem; border:1px solid #eef2f8;
+      display:flex; align-items:center; gap:1rem;
+    }
+    body.dark-mode .stat-card { background:#1a1f2b; border-color:#2a3442; }
+    .stat-icon {
+      width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+      color:white; font-size:1.3rem;
+    }
+    .stat-icon.blue { background:#2a7de1; }
+    .stat-icon.green { background:#10B981; }
+    .stat-icon.amber { background:#F59E0B; }
+    .stat-info h4 { font-size:0.8rem; color:#6b7d9c; text-transform:uppercase; letter-spacing:0.3px; }
+    .stat-info .value { font-size:1.5rem; font-weight:700; margin-top:0.2rem; }
+
+    .card-panel {
+      background:#fff; border-radius:20px; padding:1.5rem; border:1px solid #eef2f8; margin-bottom:1.5rem;
+    }
+    body.dark-mode .card-panel { background:#1a1f2b; border-color:#2a3442; }
+    .card-panel h3 { font-size:1.1rem; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
+    .card-panel h3 i { color:#2a7de1; }
+
+    .course-item {
+      display:flex; align-items:center; gap:1rem; padding:0.8rem 0; border-bottom:1px solid #f0f4fa;
+    }
+    body.dark-mode .course-item { border-color:#2a3442; }
+    .course-item:last-child { border-bottom:none; }
+    .course-thumb {
+      width:48px; height:48px; border-radius:12px; background:#eef2f8; object-fit:cover;
+    }
+    .course-info { flex:1; }
+    .course-info .name { font-weight:600; font-size:0.9rem; }
+    .course-info .teacher { font-size:0.75rem; color:#6b7d9c; }
+    .progress-bar { width:100%; height:6px; background:#eef2f8; border-radius:10px; overflow:hidden; margin-top:0.4rem; }
+    .progress-fill { height:100%; background:#2a7de1; border-radius:10px; }
+
+    .notif-item {
+      display:flex; align-items:center; gap:0.8rem; padding:0.8rem 0; border-bottom:1px solid #f0f4fa;
+      font-size:0.9rem;
+    }
+    body.dark-mode .notif-item { border-color:#2a3442; }
+    .notif-item i { color:#2a7de1; width:1.2rem; }
+    .notif-item .time { margin-left:auto; font-size:0.75rem; color:#8a9bb5; }
+
+    .empty-state { text-align:center; padding:2rem; color:#8a9bb5; }
+
+    .toast-container { position:fixed; top:1rem; right:1rem; z-index:3000; display:flex; flex-direction:column; gap:0.5rem; }
+    .toast {
+      padding:0.8rem 1.5rem; border-radius:14px; background:white; box-shadow:0 8px 20px rgba(0,0,0,0.15);
+      font-weight:500; display:flex; align-items:center; gap:0.5rem; animation: slideIn 0.3s ease;
+    }
+    body.dark-mode .toast { background:#2a3442; color:#eef2f6; }
+    .toast.success { border-left:4px solid #10B981; }
+    .toast.error { border-left:4px solid #EF4444; }
+    @keyframes slideIn { from { transform:translateX(100%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+
+    @media (max-width:768px) {
+      .hamburger { display:block; }
+      .main { margin-left:0; }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .welcome-card { flex-direction:column; text-align:center; }
+    }
+    .rtl { direction:rtl; }
+    .rtl .sidebar nav a { flex-direction:row-reverse; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <i class="fas fa-graduation-cap"></i>
+    <span>Edu<small>Core</small></span>
+  </div>
+  <nav>
+    <a href="dashboard.html" class="active"><i class="fas fa-chart-pie"></i> <span data-key="dashboard">Dashboard</span></a>
+    <a href="my-courses.html"><i class="fas fa-book-open"></i> <span data-key="myCourses">My Courses</span></a>
+    <a href="browse-teachers.html"><i class="fas fa-search"></i> <span data-key="browse">Browse Teachers</span></a>
+    <a href="assignments.html"><i class="fas fa-clipboard-list"></i> <span data-key="assignments">Assignments</span></a>
+    <a href="exams.html"><i class="fas fa-file-alt"></i> <span data-key="exams">Exams</span></a>
+    <a href="messages.html"><i class="fas fa-comments"></i> <span data-key="messages">Messages</span></a>
+    <a href="profile.html"><i class="fas fa-user"></i> <span data-key="profile">Profile</span></a>
+    <a href="settings.html"><i class="fas fa-cog"></i> <span data-key="settings">Settings</span></a>
+  </nav>
+  <div class="sidebar-footer" id="logoutBtn">
+    <i class="fas fa-sign-out-alt"></i> <span data-key="logout">Logout</span>
+  </div>
+</aside>
+
+<div class="main" id="mainContent">
+  <header class="navbar">
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+      <h1 id="pageTitle">Dashboard</h1>
+    </div>
+    <div class="navbar-actions">
+      <div class="lang-dark">
+        <button id="langToggle"><i class="fas fa-globe"></i> <span id="langLabel">EN</span></button>
+        <button class="dark-toggle" id="darkToggle"><i class="fas fa-moon"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="welcome-card" id="welcomeCard">
+    <div class="welcome-avatar"><i class="fas fa-user"></i></div>
+    <div class="welcome-info">
+      <h2 id="welcomeName">Welcome back!</h2>
+      <p>Here's your learning overview for today.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-book-open"></i></div>
+      <div class="stat-info"><h4>Active Courses</h4><div class="value" id="activeCourses">—</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber"><i class="fas fa-clipboard-list"></i></div>
+      <div class="stat-info"><h4>Pending Work</h4><div class="value" id="pendingWork">—</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-chart-line"></i></div>
+      <div class="stat-info"><h4>Avg Progress</h4><div class="value" id="avgProgress">—</div></div>
+    </div>
+  </div>
+
+  <div class="card-panel">
+    <h3><i class="fas fa-book-open"></i> <span>My Recent Courses</span></h3>
+    <div id="recentCourses"><div class="empty-state">Loading...</div></div>
+  </div>
+
+  <div class="card-panel">
+    <h3><i class="fas fa-bell"></i> <span>Recent Notifications</span></h3>
+    <div id="recentNotifications"><div class="empty-state">Loading...</div></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+import {
+  getFirestore, collection, getDocs, query, orderBy, limit, onSnapshot, doc, getDoc
+} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCOBJ22snwOow8xfQnL2WmCusmyS8iWWlk",
+  authDomain: "educore-c3b42.firebaseapp.com",
+  projectId: "educore-c3b42",
+  storageBucket: "educore-c3b42.firebasestorage.app",
+  messagingSenderId: "750509780814",
+  appId: "1:750509780814:web:f57bddff39c7668b3cf81f",
+  measurementId: "G-LF317C03Q0"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let STUDENT_ID = '';
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'login.html'; return; }
+  STUDENT_ID = user.uid;
+  document.body.classList.add('auth-ready');
+  await loadProfile();
+  await loadStats();
+  await loadRecentCourses();
+  await loadNotifications();
+});
+
+// Mobile sidebar
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+document.getElementById('hamburgerBtn').addEventListener('click', () => {
+  sidebar.classList.add('open'); overlay.classList.add('show');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open'); overlay.classList.remove('show');
+});
+document.querySelectorAll('.sidebar nav a').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 768) { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+  });
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  if (confirm('Are you sure you want to logout?')) {
+    signOut(auth).then(() => window.location.href = 'login.html');
+  }
+});
+
+function showToast(msg, type='success') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-circle'}"></i> ${msg}`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+async function loadProfile() {
+  try {
+    const snap = await getDoc(doc(db, 'students', STUDENT_ID, 'profile', 'info'));
+    if (snap.exists()) {
+      const d = snap.data();
+      document.getElementById('welcomeName').textContent = `Welcome, ${d.name || 'Student'}!`;
+    }
+  } catch(e) { /* silent */ }
+}
+
+async function loadStats() {
+  try {
+    const coursesSnap = await getDocs(collection(db, 'students', STUDENT_ID, 'courses'));
+    const enrollments = coursesSnap.docs.map(d => d.data());
+    const active = enrollments.filter(e => e.status === 'active').length;
+    document.getElementById('activeCourses').textContent = active;
+
+    const assignmentsSnap = await getDocs(collection(db, 'students', STUDENT_ID, 'assignments'));
+    const pending = assignmentsSnap.docs.filter(d => d.data().status === 'pending').length;
+    document.getElementById('pendingWork').textContent = pending;
+
+    const totalProgress = enrollments.reduce((s, e) => s + (e.progress || 0), 0);
+    const avg = enrollments.length ? Math.round(totalProgress / enrollments.length) : 0;
+    document.getElementById('avgProgress').textContent = avg + '%';
+  } catch(e) { /* silent */ }
+}
+
+async function loadRecentCourses() {
+  const container = document.getElementById('recentCourses');
+  try {
+    const q = query(collection(db, 'students', STUDENT_ID, 'courses'), orderBy('enrolledAt', 'desc'), limit(4));
+    const snap = await getDocs(q);
+    if (snap.empty) { container.innerHTML = '<div class="empty-state">No courses yet. <a href="browse-teachers.html">Find a teacher</a></div>'; return; }
+    container.innerHTML = snap.docs.map(d => {
+      const c = d.data();
+      return `<div class="course-item">
+        <img class="course-thumb" src="${c.thumbnail || 'https://via.placeholder.com/48'}" alt="${c.courseName}">
+        <div class="course-info">
+          <div class="name">${c.courseName || 'Unnamed'}</div>
+          <div class="teacher">${c.teacherName || 'Unknown'} · ${c.subject || ''}</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${c.progress || 0}%"></div></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { container.innerHTML = '<div class="empty-state">Error loading courses.</div>'; }
+}
+
+async function loadNotifications() {
+  const container = document.getElementById('recentNotifications');
+  try {
+    const q = query(collection(db, 'notifications'), orderBy('sentAt', 'desc'), limit(3));
+    const snap = await getDocs(q);
+    if (snap.empty) { container.innerHTML = '<div class="empty-state">No notifications yet.</div>'; return; }
+    container.innerHTML = snap.docs.map(d => {
+      const n = d.data();
+      const time = n.sentAt?.toDate ? n.sentAt.toDate().toLocaleDateString() : '';
+      return `<div class="notif-item"><i class="fas fa-circle"></i> ${n.message || ''} <span class="time">${time}</span></div>`;
+    }).join('');
+  } catch(e) { container.innerHTML = '<div class="empty-state">Error loading notifications.</div>'; }
+}
+
+// Language & Dark Mode
+let lang = 'en';
+const langToggle = document.getElementById('langToggle');
+const darkToggle = document.getElementById('darkToggle');
+const langLabel = document.getElementById('langLabel');
+const mainEl = document.getElementById('mainContent');
+
+const translations = {
+  en: { dashboard:'Dashboard', myCourses:'My Courses', browse:'Browse Teachers', assignments:'Assignments', exams:'Exams', messages:'Messages', profile:'Profile', settings:'Settings', logout:'Logout', pageTitle:'Dashboard' },
+  ar: { dashboard:'لوحة التحكم', myCourses:'كورساتي', browse:'تصفح المدرسين', assignments:'الواجبات', exams:'الامتحانات', messages:'الرسائل', profile:'الملف الشخصي', settings:'الإعدادات', logout:'تسجيل الخروج', pageTitle:'لوحة التحكم' }
+};
+
+langToggle.addEventListener('click', () => {
+  lang = lang==='en'?'ar':'en';
+  langLabel.textContent = lang.toUpperCase();
+  const t = translations[lang];
+  document.querySelectorAll('[data-key]').forEach(el => { if(t[el.dataset.key]) el.textContent = t[el.dataset.key]; });
+  document.getElementById('pageTitle').textContent = t.pageTitle;
+  mainEl.classList.toggle('rtl', lang==='ar');
+});
+
+darkToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  darkToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+});
+</script>
+</body>
+</html>
