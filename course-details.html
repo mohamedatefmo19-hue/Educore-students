@@ -36,286 +36,107 @@
     }
     body.dark-mode .sidebar { background: #141a26; border-left-color: #2a3442; }
     .sidebar.closed { transform: translateX(100%); }
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      margin-bottom: 2.5rem;
-    }
-    .sidebar-logo i {
-      font-size: 1.8rem;
-      color: #2a7de1;
-      background: #e8f0fe;
-      padding: 0.6rem;
-      border-radius: 14px;
-    }
-    body.dark-mode .sidebar-logo i { background: #1f2a40; color: #6b9ef0; }
+    .sidebar-logo { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 2.5rem; }
+    .sidebar-logo i { font-size: 1.8rem; color: #2a7de1; background: #e8f0fe; padding: 0.6rem; border-radius: 14px; }
     .sidebar-logo span { font-weight: 700; font-size: 1.5rem; }
     .sidebar-logo span small { color: #2a7de1; }
     .sidebar nav { flex: 1; }
     .sidebar nav a {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      padding: 0.8rem 1rem;
-      border-radius: 12px;
-      color: #4a5b7a;
-      text-decoration: none;
-      font-weight: 500;
-      transition: 0.15s;
-      margin-bottom: 0.3rem;
+      display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1rem; border-radius: 12px;
+      color: #4a5b7a; text-decoration: none; font-weight: 500; transition: 0.15s; margin-bottom: 0.3rem;
     }
-    body.dark-mode .sidebar nav a { color: #b0c0d4; }
     .sidebar nav a i { width: 1.4rem; }
-    .sidebar nav a:hover, .sidebar nav a.active {
-      background: #eef4fe;
-      color: #1a67c4;
-    }
-    body.dark-mode .sidebar nav a:hover, body.dark-mode .sidebar nav a.active {
-      background: #1f2a40;
-      color: #6b9ef0;
-    }
+    .sidebar nav a:hover, .sidebar nav a.active { background: #eef4fe; color: #1a67c4; }
+    body.dark-mode .sidebar nav a:hover, body.dark-mode .sidebar nav a.active { background: #1f2a40; color: #6b9ef0; }
     .sidebar-footer {
-      border-top: 1px solid #e7edf5;
-      padding-top: 1.2rem;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #6b7d9c;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
+      border-top: 1px solid #e7edf5; padding-top: 1.2rem; margin-top: 0.5rem; font-size: 0.9rem;
+      font-weight: 600; color: #6b7d9c; cursor: pointer; display: flex; align-items: center; gap: 0.6rem;
     }
-    body.dark-mode .sidebar-footer { border-top-color: #2a3442; }
     .sidebar-footer:hover { color: #e74c3c; }
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 999;
-    }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999; }
     .sidebar-overlay.show { display: block; }
 
     .main {
-      flex: 1;
-      margin-right: 260px;
-      padding: 1.8rem 2rem 2.5rem;
-      transition: margin-right 0.3s ease;
-      overflow-x: hidden;
-      width: 100%;
+      flex: 1; margin-right: 260px; padding: 1.8rem 2rem 2.5rem; transition: margin-right 0.3s ease;
+      overflow-x: hidden; width: 100%;
     }
     .main.expanded { margin-right: 0; }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
+    .navbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
     .navbar h1 { font-size: 1.7rem; font-weight: 700; }
     .navbar-actions { display: flex; align-items: center; gap: 1.2rem; }
-    .navbar-actions button {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      color: #4a5b7a;
-      cursor: pointer;
-    }
+    .navbar-actions button { background: none; border: none; font-size: 1.2rem; color: #4a5b7a; cursor: pointer; }
     body.dark-mode .navbar-actions button { color: #b0c0d4; }
     .navbar-actions button:hover { color: #2a7de1; }
     .lang-dark { display: flex; gap: 0.6rem; }
-    .lang-dark button {
-      background: none;
-      border: none;
-      font-weight: 600;
-      color: #2a7de1;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
+    .lang-dark button { background: none; border: none; font-weight: 600; color: #2a7de1; cursor: pointer; font-size: 0.85rem; }
     .lang-dark .dark-toggle { color: #6b7d9c; }
     body.dark-mode .lang-dark .dark-toggle { color: #b0c0d4; }
-    .hamburger {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: #4a5b7a;
-      cursor: pointer;
-    }
-    body.dark-mode .hamburger { color: #b0c0d4; }
+    .hamburger { display: none; background: none; border: none; font-size: 1.5rem; color: #4a5b7a; cursor: pointer; }
 
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #4a5b7a;
-      text-decoration: none;
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-    }
+    .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: #4a5b7a; text-decoration: none; font-weight: 500; margin-bottom: 1.5rem; }
     .back-link:hover { color: #2a7de1; }
 
     .course-header {
-      background: #ffffff;
-      border-radius: 24px;
-      padding: 2rem;
-      border: 1px solid #eef2f8;
-      margin-bottom: 1.5rem;
+      background: #ffffff; border-radius: 24px; padding: 2rem; border: 1px solid #eef2f8; margin-bottom: 1.5rem;
     }
     body.dark-mode .course-header { background: #1a1f2b; border-color: #2a3442; }
     .course-header h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
     .course-header .desc { color: #6b7d9c; font-size: 0.9rem; margin-bottom: 1rem; }
-    .course-header .meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      font-size: 0.9rem;
-      color: #4a5b7a;
-    }
+    .course-header .meta { display: flex; flex-wrap: wrap; gap: 1rem; font-size: 0.9rem; color: #4a5b7a; }
     .course-header .meta span { display: flex; align-items: center; gap: 0.4rem; }
     .course-header .meta i { color: #2a7de1; width: 1.2rem; }
-
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: #eef2f8;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-top: 1rem;
-    }
+    .progress-bar { width: 100%; height: 8px; background: #eef2f8; border-radius: 10px; overflow: hidden; margin-top: 1rem; }
     .progress-fill { height: 100%; background: #2a7de1; border-radius: 10px; }
 
-    .layout-2col {
-      display: grid;
-      grid-template-columns: 300px 1fr;
-      gap: 1.5rem;
-    }
-
+    .layout-2col { display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; }
     .lessons-list {
-      background: #ffffff;
-      border-radius: 20px;
-      border: 1px solid #eef2f8;
-      overflow: hidden;
+      background: #ffffff; border-radius: 20px; border: 1px solid #eef2f8; overflow: hidden;
     }
     body.dark-mode .lessons-list { background: #1a1f2b; border-color: #2a3442; }
     .lessons-list h3 { padding: 1.2rem; font-size: 1rem; font-weight: 600; border-bottom: 1px solid #eef2f8; }
-    body.dark-mode .lessons-list h3 { border-bottom-color: #2a3442; }
     .lesson-item {
-      padding: 1rem 1.2rem;
-      border-bottom: 1px solid #eef2f8;
-      cursor: pointer;
-      transition: 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
+      padding: 1rem 1.2rem; border-bottom: 1px solid #eef2f8; cursor: pointer; transition: 0.15s;
+      display: flex; align-items: center; gap: 0.8rem;
     }
-    body.dark-mode .lesson-item { border-bottom-color: #2a3442; }
     .lesson-item:hover { background: #f9fbfe; }
-    body.dark-mode .lesson-item:hover { background: #252d3d; }
     .lesson-item.active { background: #eef4fe; border-right: 3px solid #2a7de1; }
-    body.dark-mode .lesson-item.active { background: #1f2a40; }
     .lesson-item .lesson-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #e8f0fe;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #2a7de1;
-      font-size: 0.9rem;
+      width: 36px; height: 36px; border-radius: 10px; background: #e8f0fe; display: flex;
+      align-items: center; justify-content: center; color: #2a7de1; font-size: 0.9rem;
     }
     .lesson-item .lesson-info { flex: 1; }
     .lesson-item .lesson-title { font-weight: 600; font-size: 0.9rem; }
-    .lesson-item .lesson-duration { font-size: 0.75rem; color: #8a9bb5; }
-
     .lesson-player {
-      background: #ffffff;
-      border-radius: 20px;
-      border: 1px solid #eef2f8;
-      overflow: hidden;
+      background: #ffffff; border-radius: 20px; border: 1px solid #eef2f8; overflow: hidden;
     }
     body.dark-mode .lesson-player { background: #1a1f2b; border-color: #2a3442; }
-    .lesson-player video {
-      width: 100%;
-      max-height: 400px;
-      background: #000;
-    }
+    .lesson-player video { width: 100%; max-height: 400px; background: #000; }
     .lesson-player .player-body { padding: 1.5rem; }
     .lesson-player .player-body h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.8rem; }
     .lesson-player .player-body p { color: #6b7d9c; font-size: 0.9rem; margin-bottom: 1rem; }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.4rem;
-      border-radius: 40px;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: 0.15s;
-      font-size: 0.9rem;
-      white-space: nowrap;
-    }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.4rem; border-radius: 40px; font-weight: 600; border: none; cursor: pointer; transition: 0.15s; font-size: 0.9rem; white-space: nowrap; }
     .btn-primary { background: #2a7de1; color: white; }
     .btn-primary:hover { background: #1a67c4; }
     .btn-secondary { background: #eef2f8; color: #1a253a; }
     .btn-secondary:hover { background: #dfe6f0; }
-    body.dark-mode .btn-secondary { background: #2a3442; color: #eef2f6; }
 
     .empty-state { text-align: center; padding: 2rem; color: #8a9bb5; }
     .empty-state i { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.5; }
-
-    .toast-container {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 3000;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .toast {
-      padding: 0.8rem 1.5rem;
-      border-radius: 14px;
-      background: white;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-      font-weight: 500;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      animation: slideIn 0.3s ease;
-    }
-    body.dark-mode .toast { background: #2a3442; color: #eef2f6; }
-    .toast.success { border-right: 4px solid #10B981; }
-    .toast.error { border-right: 4px solid #EF4444; }
-    @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .error-details { color: #e74c3c; font-size: 0.85rem; margin-top: 0.5rem; word-break: break-all; }
 
     @media (max-width: 768px) {
       .hamburger { display: block; }
       .main { margin-right: 0; }
       .sidebar { transform: translateX(100%); }
-      .sidebar.closed { transform: translateX(100%); }
       .sidebar.open { transform: translateX(0); }
       .layout-2col { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <i class="fas fa-graduation-cap"></i>
-      <span>Edu<small>Core</small></span>
-    </div>
+    <div class="sidebar-logo"><i class="fas fa-graduation-cap"></i><span>Edu<small>Core</small></span></div>
     <nav>
       <a href="dashboard.html"><i class="fas fa-chart-pie"></i> <span data-key="dashboard">لوحة التحكم</span></a>
       <a href="browse-teachers.html"><i class="fas fa-users"></i> <span data-key="teachers">المدرسون</span></a>
@@ -325,9 +146,7 @@
       <a href="profile.html"><i class="fas fa-user"></i> <span data-key="profile">الملف الشخصي</span></a>
       <a href="settings.html"><i class="fas fa-cog"></i> <span data-key="settings">الإعدادات</span></a>
     </nav>
-    <div class="sidebar-footer" id="logoutBtn">
-      <i class="fas fa-sign-out-alt"></i> <span data-key="logout">تسجيل الخروج</span>
-    </div>
+    <div class="sidebar-footer" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span data-key="logout">تسجيل الخروج</span></div>
   </aside>
 
   <div class="main" id="mainContent">
@@ -344,15 +163,12 @@
         <button><i class="fas fa-user-circle" style="font-size:1.6rem;"></i></button>
       </div>
     </header>
-
     <a href="my-courses.html" class="back-link"><i class="fas fa-arrow-right"></i> العودة لكورساتي</a>
 
-    <!-- تفاصيل الكورس -->
     <div id="courseHeader" class="course-header">
       <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><br>جاري تحميل الكورس...</div>
     </div>
 
-    <!-- دروس + مشغل -->
     <div class="layout-2col">
       <div class="lessons-list">
         <h3><i class="fas fa-list"></i> قائمة الدروس</h3>
@@ -369,14 +185,10 @@
     </div>
   </div>
 
-  <div class="toast-container" id="toastContainer"></div>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
-    import {
-      getFirestore, doc, getDoc, collection, getDocs, updateDoc, query, where, orderBy, serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCOBJ22snwOow8xfQnL2WmCusmyS8iWWlk",
@@ -397,8 +209,6 @@
     const courseId = urlParams.get('id');
     const teacherId = urlParams.get('teacher');
 
-    let allLessons = [];
-    let currentLesson = null;
     let enrollmentId = null;
     let currentProgress = 0;
     let totalLessons = 0;
@@ -417,7 +227,6 @@
       }
     });
 
-    // Mobile sidebar
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
     document.getElementById('hamburgerBtn').addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('show'); });
@@ -425,21 +234,9 @@
     document.querySelectorAll('.sidebar nav a').forEach(link => {
       link.addEventListener('click', () => { if (window.innerWidth <= 768) { sidebar.classList.remove('open'); overlay.classList.remove('show'); } });
     });
-
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
-        signOut(auth).then(() => window.location.href = 'login.html');
-      }
+      if (confirm('هل أنت متأكد من تسجيل الخروج؟')) signOut(auth).then(() => window.location.href = 'login.html');
     });
-
-    function showToast(msg, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
 
     async function loadCourseDetails() {
       try {
@@ -450,7 +247,6 @@
         }
         const course = courseDoc.data();
 
-        // جلب بيانات التسجيل (للتقدم)
         const enrollSnap = await getDocs(query(
           collection(db, 'students', STUDENT_ID, 'enrollments'),
           where('courseId', '==', courseId),
@@ -462,12 +258,11 @@
           currentProgress = enrollDoc.data().progress || 0;
         }
 
-        // جلب اسم المعلم
         let teacherName = 'مدرس';
         try {
           const prefsDoc = await getDoc(doc(db, 'teachers', teacherId, 'settings', 'preferences'));
           if (prefsDoc.exists()) teacherName = prefsDoc.data().name || 'مدرس';
-        } catch (e) {}
+        } catch(e) {}
 
         document.getElementById('courseHeader').innerHTML = `
           <h2>${escapeHtml(course.title || 'كورس بدون عنوان')}</h2>
@@ -481,16 +276,18 @@
           <div class="progress-bar"><div class="progress-fill" style="width:${currentProgress}%;"></div></div>
           <div style="font-size:0.8rem; color:#6b7d9c; margin-top:0.3rem;">${currentProgress}% مكتمل</div>
         `;
-      } catch (error) {
-        showToast('فشل تحميل الكورس', 'error');
+      } catch(error) {
+        document.getElementById('courseHeader').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><br>فشل تحميل الكورس<div class="error-details">${error.message}</div></div>`;
       }
     }
 
     async function loadLessons() {
       const container = document.getElementById('lessonsContainer');
       try {
-        const snap = await getDocs(query(collection(db, 'teachers', teacherId, 'lessons'), where('courseId', '==', courseId), orderBy('createdAt', 'asc')));
-        allLessons = [];
+        const lessonsRef = collection(db, 'teachers', teacherId, 'lessons');
+        const q = query(lessonsRef, where('courseId', '==', courseId), orderBy('createdAt', 'asc'));
+        const snap = await getDocs(q);
+        const allLessons = [];
         snap.forEach(doc => allLessons.push({ id: doc.id, ...doc.data() }));
         totalLessons = allLessons.length;
 
@@ -504,45 +301,38 @@
             <div class="lesson-icon"><i class="fas fa-play"></i></div>
             <div class="lesson-info">
               <div class="lesson-title">${index + 1}. ${escapeHtml(l.title || 'درس')}</div>
-              <div class="lesson-duration">${l.description || ''}</div>
+              <div style="font-size:0.7rem; color:#8a9bb5;">${l.description || ''}</div>
             </div>
           </div>
         `).join('');
 
-        // إضافة حدث الضغط على كل درس
         container.querySelectorAll('.lesson-item').forEach(item => {
           item.addEventListener('click', () => {
             const index = parseInt(item.dataset.index);
-            playLesson(index);
+            playLesson(allLessons[index], index);
           });
         });
 
-        // تشغيل أول درس تلقائيًا
-        if (allLessons.length > 0) playLesson(0);
-      } catch (error) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><br>فشل تحميل الدروس</div>';
+        if (allLessons.length > 0) playLesson(allLessons[0], 0);
+      } catch(error) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><br>فشل تحميل الدروس<div class="error-details">${error.message}</div></div>`;
+        console.error(error);
       }
     }
 
-    function playLesson(index) {
-      currentLesson = allLessons[index];
+    function playLesson(lesson, index) {
       const player = document.getElementById('lessonPlayer');
-
-      // تحديث نشط
-      document.querySelectorAll('.lesson-item').forEach((item, i) => {
-        item.classList.toggle('active', i === index);
-      });
+      document.querySelectorAll('.lesson-item').forEach((item, i) => item.classList.toggle('active', i === index));
 
       player.innerHTML = `
-        ${currentLesson.videoUrl ? `<video controls src="${currentLesson.videoUrl}" onplay="window.markLessonWatched(${index})"></video>` : ''}
+        ${lesson.videoUrl ? `<video controls src="${lesson.videoUrl}" onplay="window.markLessonWatched(${index})"></video>` : ''}
         <div class="player-body">
-          <h3>${escapeHtml(currentLesson.title || 'درس')}</h3>
-          <p>${escapeHtml(currentLesson.description || 'لا يوجد وصف لهذا الدرس')}</p>
-          ${currentLesson.pdfUrl ? `<a href="${currentLesson.pdfUrl}" target="_blank" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> تحميل PDF</a>` : ''}
+          <h3>${escapeHtml(lesson.title || 'درس')}</h3>
+          <p>${escapeHtml(lesson.description || 'لا يوجد وصف لهذا الدرس')}</p>
+          ${lesson.pdfUrl ? `<a href="${lesson.pdfUrl}" target="_blank" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> تحميل PDF</a>` : ''}
         </div>
       `;
 
-      // تحديث التقدم
       window.markLessonWatched = async (lessonIndex) => {
         if (!enrollmentId) return;
         const newProgress = Math.round(((lessonIndex + 1) / totalLessons) * 100);
@@ -552,16 +342,14 @@
             progress: newProgress,
             updatedAt: serverTimestamp()
           });
-          // تحديث شريط التقدم في الأعلى
           document.querySelector('.progress-fill').style.width = newProgress + '%';
-          document.querySelector('.progress-fill').nextElementSibling.textContent = newProgress + '% مكتمل';
         }
       };
     }
 
     function escapeHtml(text) {
       if (!text) return '';
-      return String(text).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+      return String(text).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
     }
 
     // اللغة والوضع الليلي
@@ -569,34 +357,23 @@
     const langToggle = document.getElementById('langToggle');
     const darkToggle = document.getElementById('darkToggle');
     const langLabel = document.getElementById('langLabel');
-
     const translations = {
-      ar: { dashboard: 'لوحة التحكم', teachers: 'المدرسون', courses: 'كورساتي', assignments: 'الواجبات', messages: 'الرسائل', profile: 'الملف الشخصي', settings: 'الإعدادات', logout: 'تسجيل الخروج', pageTitle: 'تفاصيل الكورس' },
-      en: { dashboard: 'Dashboard', teachers: 'Teachers', courses: 'My Courses', assignments: 'Assignments', messages: 'Messages', profile: 'Profile', settings: 'Settings', logout: 'Logout', pageTitle: 'Course Details' }
+      ar: { dashboard:'لوحة التحكم', teachers:'المدرسون', courses:'كورساتي', assignments:'الواجبات', messages:'الرسائل', profile:'الملف الشخصي', settings:'الإعدادات', logout:'تسجيل الخروج', pageTitle:'تفاصيل الكورس' },
+      en: { dashboard:'Dashboard', teachers:'Teachers', courses:'My Courses', assignments:'Assignments', messages:'Messages', profile:'Profile', settings:'Settings', logout:'Logout', pageTitle:'Course Details' }
     };
-
     function applyLanguage(langCode) {
       const t = translations[langCode];
-      document.querySelectorAll('[data-key]').forEach(el => {
-        const key = el.getAttribute('data-key');
-        if (t[key]) el.textContent = t[key];
-      });
+      document.querySelectorAll('[data-key]').forEach(el => { if(t[el.dataset.key]) el.textContent = t[el.dataset.key]; });
       document.getElementById('pageTitle').textContent = t.pageTitle;
+      if (langCode === 'ar') { document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; }
+      else { document.documentElement.lang = 'en'; document.documentElement.dir = 'ltr'; }
     }
-
-    langToggle.addEventListener('click', () => {
-      lang = lang === 'ar' ? 'en' : 'ar';
-      langLabel.textContent = lang.toUpperCase();
-      applyLanguage(lang);
-    });
-
+    langToggle.addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; langLabel.textContent = lang.toUpperCase(); applyLanguage(lang); });
     darkToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
       darkToggle.innerHTML = document.body.classList.contains('dark-mode') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     });
-
     applyLanguage('ar');
-    console.log('✅ صفحة تفاصيل الكورس جاهزة.');
   </script>
 </body>
 </html>
