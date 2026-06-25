@@ -178,7 +178,6 @@
     .modal .form-actions .cancel { background: #eef2f8; color: #1a253a; }
     .modal .form-actions .submit { background: #2a7de1; color: white; }
 
-    .error-details { color: #e74c3c; font-size: 0.85rem; margin-top: 0.5rem; word-break: break-all; }
     .toast-container {
       position: fixed; top: 1rem; right: 1rem; z-index: 3000; display: flex; flex-direction: column; gap: 0.5rem;
     }
@@ -286,7 +285,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
     import {
-      getFirestore, collection, addDoc, updateDoc, doc, query, orderBy, onSnapshot, serverTimestamp, writeBatch, getDoc
+      getFirestore, collection, addDoc, updateDoc, doc, query, onSnapshot, serverTimestamp, writeBatch, getDoc
     } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -345,7 +344,8 @@
     let currentChatName = '';
 
     function listenToMessages() {
-      const q = query(collection(db, 'messages'), orderBy('timestamp', 'desc'));
+      // بدون orderBy لتجنب الفهرس المركب – سنقوم بالترتيب محليًا
+      const q = query(collection(db, 'messages'));
       onSnapshot(q, (snapshot) => {
         allMessages = [];
         snapshot.forEach(doc => allMessages.push({ id: doc.id, ...doc.data() }));
@@ -388,15 +388,18 @@
     function renderConversations() {
       const container = document.getElementById('conversationsList');
       const searchTerm = document.getElementById('searchConversation').value.toLowerCase();
-      const arr = Array.from(conversationsMap.values()).filter(c => c.name.toLowerCase().includes(searchTerm)).sort((a,b) => (b.lastTimestamp?.seconds || 0) - (a.lastTimestamp?.seconds || 0));
+      // ترتيب المحادثات محليًا حسب آخر رسالة (الأحدث أولاً)
+      const arr = Array.from(conversationsMap.values())
+        .filter(c => c.name.toLowerCase().includes(searchTerm))
+        .sort((a, b) => (b.lastTimestamp?.seconds || 0) - (a.lastTimestamp?.seconds || 0));
       if (!arr.length) { container.innerHTML = '<div class="empty-conversations">لا توجد محادثات</div>'; return; }
       container.innerHTML = arr.map(conv => {
-        const timeStr = conv.lastTimestamp ? new Date(conv.lastTimestamp.seconds * 1000).toLocaleTimeString('ar-EG', { hour:'2-digit', minute:'2-digit' }) : '';
+        const timeStr = conv.lastTimestamp ? new Date(conv.lastTimestamp.seconds * 1000).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
         const activeClass = currentChatId === conv.id ? 'active' : '';
         return `<div class="conversation-item ${activeClass}" data-chatid="${conv.id}" data-chatname="${escapeHtml(conv.name)}">
           <div class="conversation-avatar">${conv.name.charAt(0).toUpperCase()}</div>
-          <div class="conversation-info"><div class="conversation-name">${escapeHtml(conv.name)}</div><div class="conversation-preview">${escapeHtml(conv.lastMessage||'')}</div></div>
-          <div class="conversation-meta"><div>${timeStr}</div>${conv.unreadCount>0?`<span class="unread-badge">${conv.unreadCount}</span>`:''}</div>
+          <div class="conversation-info"><div class="conversation-name">${escapeHtml(conv.name)}</div><div class="conversation-preview">${escapeHtml(conv.lastMessage || '')}</div></div>
+          <div class="conversation-meta"><div>${timeStr}</div>${conv.unreadCount > 0 ? `<span class="unread-badge">${conv.unreadCount}</span>` : ''}</div>
         </div>`;
       }).join('');
       container.querySelectorAll('.conversation-item').forEach(item => item.addEventListener('click', () => selectConversation(item.dataset.chatid, item.dataset.chatname)));
@@ -424,12 +427,14 @@
 
     function renderChatMessages(chatId) {
       const container = document.getElementById('chatMessages');
-      const msgs = allMessages.filter(m => (m.senderId===chatId && m.receiverId===STUDENT_ID) || (m.senderId===STUDENT_ID && m.receiverId===chatId)).sort((a,b) => (a.timestamp?.seconds||0)-(b.timestamp?.seconds||0));
+      const msgs = allMessages
+        .filter(m => (m.senderId === chatId && m.receiverId === STUDENT_ID) || (m.senderId === STUDENT_ID && m.receiverId === chatId))
+        .sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0)); // ترتيب تصاعدي للرسائل
       if (!msgs.length) { container.innerHTML = '<div class="no-chat-selected">لا توجد رسائل بعد. ابدأ المحادثة!</div>'; return; }
       container.innerHTML = msgs.map(m => {
         const isSent = m.senderId === STUDENT_ID;
-        const timeStr = m.timestamp ? new Date(m.timestamp.seconds*1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : '';
-        return `<div class="message-bubble ${isSent?'message-sent':'message-received'}">${escapeHtml(m.text)}<span class="message-time">${timeStr}</span></div>`;
+        const timeStr = m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+        return `<div class="message-bubble ${isSent ? 'message-sent' : 'message-received'}">${escapeHtml(m.text)}<span class="message-time">${timeStr}</span></div>`;
       }).join('');
       container.scrollTop = container.scrollHeight;
     }
@@ -454,7 +459,7 @@
       try {
         const prefsDoc = await getDoc(doc(db, 'teachers', teacherId, 'settings', 'preferences'));
         if (prefsDoc.exists()) teacherName = prefsDoc.data().name || teacherId;
-      } catch(e) {}
+      } catch (e) {}
       document.getElementById('newChatModal').classList.remove('active');
       document.getElementById('newTeacherId').value = '';
       selectConversation(teacherId, teacherName);
@@ -463,7 +468,7 @@
 
     function escapeHtml(text) {
       if (!text) return '';
-      return String(text).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+      return String(text).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
     }
 
     // اللغة والوضع الليلي
@@ -472,12 +477,12 @@
     const darkToggle = document.getElementById('darkToggle');
     const langLabel = document.getElementById('langLabel');
     const translations = {
-      ar: { dashboard:'لوحة التحكم', teachers:'المدرسون', courses:'كورساتي', assignments:'الواجبات', messages:'الرسائل', profile:'الملف الشخصي', settings:'الإعدادات', logout:'تسجيل الخروج', pageTitle:'الرسائل' },
-      en: { dashboard:'Dashboard', teachers:'Teachers', courses:'My Courses', assignments:'Assignments', messages:'Messages', profile:'Profile', settings:'Settings', logout:'Logout', pageTitle:'Messages' }
+      ar: { dashboard: 'لوحة التحكم', teachers: 'المدرسون', courses: 'كورساتي', assignments: 'الواجبات', messages: 'الرسائل', profile: 'الملف الشخصي', settings: 'الإعدادات', logout: 'تسجيل الخروج', pageTitle: 'الرسائل' },
+      en: { dashboard: 'Dashboard', teachers: 'Teachers', courses: 'My Courses', assignments: 'Assignments', messages: 'Messages', profile: 'Profile', settings: 'Settings', logout: 'Logout', pageTitle: 'Messages' }
     };
     function applyLanguage(langCode) {
       const t = translations[langCode];
-      document.querySelectorAll('[data-key]').forEach(el => { if(t[el.dataset.key]) el.textContent = t[el.dataset.key]; });
+      document.querySelectorAll('[data-key]').forEach(el => { if (t[el.dataset.key]) el.textContent = t[el.dataset.key]; });
       document.getElementById('pageTitle').textContent = t.pageTitle;
     }
     langToggle.addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; langLabel.textContent = lang.toUpperCase(); applyLanguage(lang); });
