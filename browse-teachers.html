@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>EduCore · تصفح المدرسين</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fc;
+      color: #0b1e33;
+      display: flex;
+      min-height: 100vh;
+    }
+    body.dark-mode { background: #0b0e14; color: #eef2f6; }
+
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      border-left: 1px solid #e7edf5;
+      padding: 2rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      transform: translateX(0);
+    }
+    body.dark-mode .sidebar { background: #141a26; border-left-color: #2a3442; }
+    .sidebar.closed { transform: translateX(100%); }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 2.5rem;
+    }
+    .sidebar-logo i {
+      font-size: 1.8rem;
+      color: #2a7de1;
+      background: #e8f0fe;
+      padding: 0.6rem;
+      border-radius: 14px;
+    }
+    body.dark-mode .sidebar-logo i { background: #1f2a40; color: #6b9ef0; }
+    .sidebar-logo span { font-weight: 700; font-size: 1.5rem; }
+    .sidebar-logo span small { color: #2a7de1; }
+    .sidebar nav { flex: 1; }
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      color: #4a5b7a;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.15s;
+      margin-bottom: 0.3rem;
+    }
+    body.dark-mode .sidebar nav a { color: #b0c0d4; }
+    .sidebar nav a i { width: 1.4rem; }
+    .sidebar nav a:hover, .sidebar nav a.active {
+      background: #eef4fe;
+      color: #1a67c4;
+    }
+    body.dark-mode .sidebar nav a:hover, body.dark-mode .sidebar nav a.active {
+      background: #1f2a40;
+      color: #6b9ef0;
+    }
+    .sidebar-footer {
+      border-top: 1px solid #e7edf5;
+      padding-top: 1.2rem;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #6b7d9c;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    body.dark-mode .sidebar-footer { border-top-color: #2a3442; }
+    .sidebar-footer:hover { color: #e74c3c; }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 999;
+    }
+    .sidebar-overlay.show { display: block; }
+
+    .main {
+      flex: 1;
+      margin-right: 260px;
+      padding: 1.8rem 2rem 2.5rem;
+      transition: margin-right 0.3s ease;
+      overflow-x: hidden;
+      width: 100%;
+    }
+    .main.expanded { margin-right: 0; }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .navbar h1 { font-size: 1.7rem; font-weight: 700; }
+    .navbar-actions { display: flex; align-items: center; gap: 1.2rem; }
+    .navbar-actions button {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #4a5b7a;
+      cursor: pointer;
+    }
+    body.dark-mode .navbar-actions button { color: #b0c0d4; }
+    .navbar-actions button:hover { color: #2a7de1; }
+    .lang-dark { display: flex; gap: 0.6rem; }
+    .lang-dark button {
+      background: none;
+      border: none;
+      font-weight: 600;
+      color: #2a7de1;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .lang-dark .dark-toggle { color: #6b7d9c; }
+    body.dark-mode .lang-dark .dark-toggle { color: #b0c0d4; }
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #4a5b7a;
+      cursor: pointer;
+    }
+    body.dark-mode .hamburger { color: #b0c0d4; }
+
+    .filter-bar {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #eef2f8;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+    body.dark-mode .filter-bar { background: #1a1f2b; border-color: #2a3442; }
+    .filter-bar label { font-weight: 600; font-size: 0.9rem; color: #4a5b7a; }
+    .filter-bar select {
+      padding: 0.6rem 1.2rem;
+      border: 1.5px solid #dfe6f0;
+      border-radius: 40px;
+      background: #f9fbfe;
+      font-weight: 500;
+      color: #1a253a;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    body.dark-mode .filter-bar select {
+      background: #252d3d;
+      border-color: #3b465b;
+      color: #eef2f6;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.4rem;
+      border-radius: 40px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: 0.15s;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    .btn-primary { background: #2a7de1; color: white; }
+    .btn-primary:hover { background: #1a67c4; }
+    .btn-secondary { background: #eef2f8; color: #1a253a; }
+    .btn-secondary:hover { background: #dfe6f0; }
+
+    .teachers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .teacher-card {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #eef2f8;
+      padding: 1.5rem;
+      transition: 0.15s;
+      cursor: pointer;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    body.dark-mode .teacher-card { background: #1a1f2b; border-color: #2a3442; }
+    .teacher-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .teacher-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: #e8f0fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #2a7de1;
+      flex-shrink: 0;
+    }
+    body.dark-mode .teacher-avatar { background: #1f2a40; color: #6b9ef0; }
+    .teacher-info { flex: 1; }
+    .teacher-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .teacher-subjects {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+    }
+    .teacher-subject-tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 30px;
+      background: #e8f0fe;
+      color: #1a67c4;
+      font-weight: 600;
+    }
+    body.dark-mode .teacher-subject-tag { background: #1f2a40; color: #6b9ef0; }
+    .teacher-grades {
+      font-size: 0.8rem;
+      color: #6b7d9c;
+      margin-bottom: 0.5rem;
+    }
+    .teacher-course-count {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #2a7de1;
+    }
+
+    .empty-state { text-align: center; padding: 3rem; color: #8a9bb5; }
+    .empty-state i { font-size: 3rem; margin-bottom: 0.8rem; opacity: 0.5; }
+
+    .toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      padding: 0.8rem 1.5rem;
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: slideIn 0.3s ease;
+    }
+    body.dark-mode .toast { background: #2a3442; color: #eef2f6; }
+    .toast.success { border-right: 4px solid #10B981; }
+    .toast.error { border-right: 4px solid #EF4444; }
+    @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .main { margin-right: 0; }
+      .sidebar { transform: translateX(100%); }
+      .sidebar.closed { transform: translateX(100%); }
+      .sidebar.open { transform: translateX(0); }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Edu<small>Core</small></span>
+    </div>
+    <nav>
+      <a href="dashboard.html"><i class="fas fa-chart-pie"></i> <span data-key="dashboard">لوحة التحكم</span></a>
+      <a href="browse-teachers.html" class="active"><i class="fas fa-users"></i> <span data-key="teachers">المدرسون</span></a>
+      <a href="my-courses.html"><i class="fas fa-book-open"></i> <span data-key="courses">كورساتي</span></a>
+      <a href="assignments.html"><i class="fas fa-tasks"></i> <span data-key="assignments">الواجبات</span></a>
+      <a href="messages.html"><i class="fas fa-comments"></i> <span data-key="messages">الرسائل</span></a>
+      <a href="profile.html"><i class="fas fa-user"></i> <span data-key="profile">الملف الشخصي</span></a>
+      <a href="settings.html"><i class="fas fa-cog"></i> <span data-key="settings">الإعدادات</span></a>
+    </nav>
+    <div class="sidebar-footer" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i> <span data-key="logout">تسجيل الخروج</span>
+    </div>
+  </aside>
+
+  <div class="main" id="mainContent">
+    <header class="navbar">
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+        <h1 id="pageTitle">المدرسون</h1>
+      </div>
+      <div class="navbar-actions">
+        <div class="lang-dark">
+          <button id="langToggle"><i class="fas fa-globe"></i> <span id="langLabel">AR</span></button>
+          <button class="dark-toggle" id="darkToggle"><i class="fas fa-moon"></i></button>
+        </div>
+        <button><i class="fas fa-user-circle" style="font-size:1.6rem;"></i></button>
+      </div>
+    </header>
+
+    <!-- شريط الفلترة -->
+    <div class="filter-bar">
+      <label>المادة:</label>
+      <select id="filterSubject">
+        <option value="">الكل</option>
+        <option value="Arabic">عربي</option>
+        <option value="English">إنجليزي</option>
+        <option value="Math">رياضيات</option>
+        <option value="Science">علوم</option>
+        <option value="Social Studies">دراسات</option>
+        <option value="French">فرنساوي</option>
+        <option value="German">ألماني</option>
+        <option value="Italian">إيطالي</option>
+        <option value="Philosophy">فلسفة</option>
+        <option value="Physics">فيزياء</option>
+        <option value="Chemistry">كيمياء</option>
+        <option value="Biology">أحياء</option>
+        <option value="History">تاريخ</option>
+        <option value="Geography">جغرافيا</option>
+        <option value="Computer Science">حاسب آلي</option>
+        <option value="Religious Studies">تربية دينية</option>
+        <option value="Art">تربية فنية</option>
+        <option value="Music">موسيقى</option>
+        <option value="Economics">اقتصاد</option>
+        <option value="Statistics">إحصاء</option>
+        <option value="Geology">جيولوجيا</option>
+      </select>
+
+      <label>الصف:</label>
+      <select id="filterGrade">
+        <option value="">الكل</option>
+        <option value="5th Primary">5 ابتدائي</option>
+        <option value="6th Primary">6 ابتدائي</option>
+        <option value="1st Prep">1 إعدادي</option>
+        <option value="2nd Prep">2 إعدادي</option>
+        <option value="3rd Prep">3 إعدادي</option>
+        <option value="1st Secondary">1 ثانوي</option>
+        <option value="2nd Secondary">2 ثانوي</option>
+        <option value="3rd Secondary">3 ثانوي</option>
+      </select>
+
+      <button class="btn btn-primary" id="filterBtn"><i class="fas fa-filter"></i> تصفية</button>
+      <button class="btn btn-secondary" id="resetFilterBtn"><i class="fas fa-redo"></i> إعادة</button>
+    </div>
+
+    <!-- شبكة المدرسين -->
+    <div class="teachers-grid" id="teachersGrid">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><br>جاري تحميل المدرسين...</div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+    import {
+      getFirestore, collectionGroup, getDocs
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOBJ22snwOow8xfQnL2WmCusmyS8iWWlk",
+      authDomain: "educore-c3b42.firebaseapp.com",
+      projectId: "educore-c3b42",
+      storageBucket: "educore-c3b42.firebasestorage.app",
+      messagingSenderId: "750509780814",
+      appId: "1:750509780814:web:f57bddff39c7668b3cf81f",
+      measurementId: "G-LF317C03Q0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let STUDENT_ID = '';
+    let allTeachers = [];
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) window.location.href = 'login.html';
+      else {
+        STUDENT_ID = user.uid;
+        document.body.classList.add('auth-ready');
+        loadTeachers();
+      }
+    });
+
+    // Mobile sidebar
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    document.getElementById('hamburgerBtn').addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('show'); });
+    overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+    document.querySelectorAll('.sidebar nav a').forEach(link => {
+      link.addEventListener('click', () => { if (window.innerWidth <= 768) { sidebar.classList.remove('open'); overlay.classList.remove('show'); } });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        signOut(auth).then(() => window.location.href = 'login.html');
+      }
+    });
+
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    async function loadTeachers() {
+      try {
+        const coursesQuery = query(collectionGroup(db, 'courses'));
+        const snapshot = await getDocs(coursesQuery);
+        
+        const teachersMap = new Map();
+
+        snapshot.forEach(doc => {
+          const course = doc.data();
+          const pathParts = doc.ref.path.split('/');
+          const teacherId = pathParts[1];
+          
+          if (!teacherId || teacherId === 'undefined') return;
+
+          if (!teachersMap.has(teacherId)) {
+            teachersMap.set(teacherId, {
+              id: teacherId,
+              subjects: new Set(),
+              grades: new Set(),
+              courseCount: 0
+            });
+          }
+
+          const teacherData = teachersMap.get(teacherId);
+          if (course.subject) teacherData.subjects.add(course.subject);
+          if (course.grade) teacherData.grades.add(course.grade);
+          teacherData.courseCount++;
+        });
+
+        allTeachers = Array.from(teachersMap.values()).map(t => ({
+          id: t.id,
+          subjects: Array.from(t.subjects),
+          grades: Array.from(t.grades),
+          courseCount: t.courseCount
+        }));
+
+        renderTeachers(allTeachers);
+      } catch (error) {
+        console.error('Error loading teachers:', error);
+        showToast('فشل تحميل المدرسين', 'error');
+        document.getElementById('teachersGrid').innerHTML = `
+          <div class="empty-state"><i class="fas fa-exclamation-triangle"></i><br>فشل تحميل البيانات</div>`;
+      }
+    }
+
+    function renderTeachers(teachers) {
+      const grid = document.getElementById('teachersGrid');
+      
+      if (teachers.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><i class="fas fa-users"></i><br>لا يوجد مدرسون متاحون حالياً</div>`;
+        return;
+      }
+
+      grid.innerHTML = teachers.map(teacher => `
+        <div class="teacher-card" onclick="window.location.href='teacher-profile.html?id=${teacher.id}'">
+          <div class="teacher-avatar"><i class="fas fa-chalkboard-teacher"></i></div>
+          <div class="teacher-info">
+            <div class="teacher-name">${escapeHtml(teacher.subjects[0] || 'مدرس')}</div>
+            <div class="teacher-subjects">
+              ${teacher.subjects.slice(0, 4).map(s => `<span class="teacher-subject-tag">${s}</span>`).join('')}
+              ${teacher.subjects.length > 4 ? `<span class="teacher-subject-tag">+${teacher.subjects.length - 4}</span>` : ''}
+            </div>
+            <div class="teacher-grades">الصفوف: ${teacher.grades.join('، ') || 'غير محدد'}</div>
+            <div class="teacher-course-count"><i class="fas fa-book-open"></i> ${teacher.courseCount} كورس</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // فلترة المدرسين
+    document.getElementById('filterBtn').addEventListener('click', () => {
+      const subject = document.getElementById('filterSubject').value;
+      const grade = document.getElementById('filterGrade').value;
+
+      let filtered = allTeachers;
+
+      if (subject) {
+        filtered = filtered.filter(t => t.subjects.includes(subject));
+      }
+      if (grade) {
+        filtered = filtered.filter(t => t.grades.includes(grade));
+      }
+
+      renderTeachers(filtered);
+    });
+
+    document.getElementById('resetFilterBtn').addEventListener('click', () => {
+      document.getElementById('filterSubject').value = '';
+      document.getElementById('filterGrade').value = '';
+      renderTeachers(allTeachers);
+    });
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[m]));
+    }
+
+    // اللغة والوضع الليلي
+    let lang = 'ar';
+    const langToggle = document.getElementById('langToggle');
+    const darkToggle = document.getElementById('darkToggle');
+    const langLabel = document.getElementById('langLabel');
+    const mainEl = document.getElementById('mainContent');
+
+    const translations = {
+      ar: {
+        dashboard: 'لوحة التحكم', teachers: 'المدرسون', courses: 'كورساتي',
+        assignments: 'الواجبات', messages: 'الرسائل', profile: 'الملف الشخصي',
+        settings: 'الإعدادات', logout: 'تسجيل الخروج', pageTitle: 'المدرسون',
+        filterBtn: '<i class="fas fa-filter"></i> تصفية', resetBtn: '<i class="fas fa-redo"></i> إعادة'
+      },
+      en: {
+        dashboard: 'Dashboard', teachers: 'Teachers', courses: 'My Courses',
+        assignments: 'Assignments', messages: 'Messages', profile: 'Profile',
+        settings: 'Settings', logout: 'Logout', pageTitle: 'Teachers',
+        filterBtn: '<i class="fas fa-filter"></i> Filter', resetBtn: '<i class="fas fa-redo"></i> Reset'
+      }
+    };
+
+    function applyLanguage(langCode) {
+      const t = translations[langCode];
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (t[key]) el.textContent = t[key];
+      });
+      document.getElementById('pageTitle').textContent = t.pageTitle;
+      document.getElementById('filterBtn').innerHTML = t.filterBtn;
+      document.getElementById('resetFilterBtn').innerHTML = t.resetBtn;
+
+      if (langCode === 'ar') {
+        document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl';
+        mainEl.style.marginRight = '260px'; mainEl.style.marginLeft = '0';
+        document.getElementById('sidebar').style.borderLeft = '1px solid #e7edf5';
+        document.getElementById('sidebar').style.borderRight = 'none';
+      } else {
+        document.documentElement.lang = 'en'; document.documentElement.dir = 'ltr';
+        mainEl.style.marginRight = '0'; mainEl.style.marginLeft = '260px';
+        document.getElementById('sidebar').style.borderLeft = 'none';
+        document.getElementById('sidebar').style.borderRight = '1px solid #e7edf5';
+      }
+    }
+
+    langToggle.addEventListener('click', () => {
+      lang = lang === 'ar' ? 'en' : 'ar';
+      langLabel.textContent = lang.toUpperCase();
+      applyLanguage(lang);
+    });
+
+    darkToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      darkToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+
+    applyLanguage('ar');
+    console.log('✅ صفحة تصفح المدرسين جاهزة.');
+  </script>
+</body>
+</html>
