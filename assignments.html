@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>EduCore · الواجبات</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f4f7fc;
+      color: #0b1e33;
+      display: flex;
+      min-height: 100vh;
+    }
+    body.dark-mode { background: #0b0e14; color: #eef2f6; }
+
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      border-left: 1px solid #e7edf5;
+      padding: 2rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      transform: translateX(0);
+    }
+    body.dark-mode .sidebar { background: #141a26; border-left-color: #2a3442; }
+    .sidebar.closed { transform: translateX(100%); }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 2.5rem;
+    }
+    .sidebar-logo i {
+      font-size: 1.8rem;
+      color: #2a7de1;
+      background: #e8f0fe;
+      padding: 0.6rem;
+      border-radius: 14px;
+    }
+    body.dark-mode .sidebar-logo i { background: #1f2a40; color: #6b9ef0; }
+    .sidebar-logo span { font-weight: 700; font-size: 1.5rem; }
+    .sidebar-logo span small { color: #2a7de1; }
+    .sidebar nav { flex: 1; }
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      color: #4a5b7a;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.15s;
+      margin-bottom: 0.3rem;
+    }
+    body.dark-mode .sidebar nav a { color: #b0c0d4; }
+    .sidebar nav a i { width: 1.4rem; }
+    .sidebar nav a:hover, .sidebar nav a.active {
+      background: #eef4fe;
+      color: #1a67c4;
+    }
+    body.dark-mode .sidebar nav a:hover, body.dark-mode .sidebar nav a.active {
+      background: #1f2a40;
+      color: #6b9ef0;
+    }
+    .sidebar-footer {
+      border-top: 1px solid #e7edf5;
+      padding-top: 1.2rem;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #6b7d9c;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    body.dark-mode .sidebar-footer { border-top-color: #2a3442; }
+    .sidebar-footer:hover { color: #e74c3c; }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 999;
+    }
+    .sidebar-overlay.show { display: block; }
+
+    .main {
+      flex: 1;
+      margin-right: 260px;
+      padding: 1.8rem 2rem 2.5rem;
+      transition: margin-right 0.3s ease;
+      overflow-x: hidden;
+      width: 100%;
+    }
+    .main.expanded { margin-right: 0; }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .navbar h1 { font-size: 1.7rem; font-weight: 700; }
+    .navbar-actions { display: flex; align-items: center; gap: 1.2rem; }
+    .navbar-actions button {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #4a5b7a;
+      cursor: pointer;
+    }
+    body.dark-mode .navbar-actions button { color: #b0c0d4; }
+    .navbar-actions button:hover { color: #2a7de1; }
+    .lang-dark { display: flex; gap: 0.6rem; }
+    .lang-dark button {
+      background: none;
+      border: none;
+      font-weight: 600;
+      color: #2a7de1;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .lang-dark .dark-toggle { color: #6b7d9c; }
+    body.dark-mode .lang-dark .dark-toggle { color: #b0c0d4; }
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #4a5b7a;
+      cursor: pointer;
+    }
+    body.dark-mode .hamburger { color: #b0c0d4; }
+
+    .assignments-list { display: flex; flex-direction: column; gap: 1rem; }
+    .assignment-card {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #eef2f8;
+      padding: 1.5rem;
+      transition: 0.15s;
+    }
+    body.dark-mode .assignment-card { background: #1a1f2b; border-color: #2a3442; }
+    .assignment-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+    .assignment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .assignment-title { font-weight: 700; font-size: 1.1rem; }
+    .assignment-status {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 30px;
+      font-weight: 600;
+    }
+    .status-pending { background: #fef3e2; color: #b9770e; }
+    .status-submitted { background: #e8f0fe; color: #1a67c4; }
+    .status-graded { background: #e3f5e9; color: #1f7840; }
+    .status-late { background: #fde8e8; color: #b3403a; }
+
+    .assignment-desc { color: #6b7d9c; font-size: 0.9rem; margin-bottom: 1rem; }
+    .assignment-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #4a5b7a;
+      margin-bottom: 1rem;
+    }
+    .assignment-meta span { display: flex; align-items: center; gap: 0.4rem; }
+    .assignment-meta i { color: #2a7de1; width: 1.1rem; }
+
+    .grade-display {
+      background: #e3f5e9;
+      color: #1f7840;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.4rem;
+      border-radius: 40px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: 0.15s;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .btn-primary { background: #2a7de1; color: white; }
+    .btn-primary:hover { background: #1a67c4; }
+    .btn-secondary { background: #eef2f8; color: #1a253a; }
+    .btn-secondary:hover { background: #dfe6f0; }
+    body.dark-mode .btn-secondary { background: #2a3442; color: #eef2f6; }
+
+    .empty-state { text-align: center; padding: 3rem; color: #8a9bb5; }
+    .empty-state i { font-size: 3rem; margin-bottom: 0.8rem; opacity: 0.5; }
+
+    .toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      padding: 0.8rem 1.5rem;
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      font-weight: 500;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: slideIn 0.3s ease;
+    }
+    body.dark-mode .toast { background: #2a3442; color: #eef2f6; }
+    .toast.success { border-right: 4px solid #10B981; }
+    .toast.error { border-right: 4px solid #EF4444; }
+    @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .main { margin-right: 0; }
+      .sidebar { transform: translateX(100%); }
+      .sidebar.closed { transform: translateX(100%); }
+      .sidebar.open { transform: translateX(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <i class="fas fa-graduation-cap"></i>
+      <span>Edu<small>Core</small></span>
+    </div>
+    <nav>
+      <a href="dashboard.html"><i class="fas fa-chart-pie"></i> <span data-key="dashboard">لوحة التحكم</span></a>
+      <a href="browse-teachers.html"><i class="fas fa-users"></i> <span data-key="teachers">المدرسون</span></a>
+      <a href="my-courses.html"><i class="fas fa-book-open"></i> <span data-key="courses">كورساتي</span></a>
+      <a href="assignments.html" class="active"><i class="fas fa-tasks"></i> <span data-key="assignments">الواجبات</span></a>
+      <a href="messages.html"><i class="fas fa-comments"></i> <span data-key="messages">الرسائل</span></a>
+      <a href="profile.html"><i class="fas fa-user"></i> <span data-key="profile">الملف الشخصي</span></a>
+      <a href="settings.html"><i class="fas fa-cog"></i> <span data-key="settings">الإعدادات</span></a>
+    </nav>
+    <div class="sidebar-footer" id="logoutBtn">
+      <i class="fas fa-sign-out-alt"></i> <span data-key="logout">تسجيل الخروج</span>
+    </div>
+  </aside>
+
+  <div class="main" id="mainContent">
+    <header class="navbar">
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <button class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></button>
+        <h1 id="pageTitle">الواجبات</h1>
+      </div>
+      <div class="navbar-actions">
+        <div class="lang-dark">
+          <button id="langToggle"><i class="fas fa-globe"></i> <span id="langLabel">AR</span></button>
+          <button class="dark-toggle" id="darkToggle"><i class="fas fa-moon"></i></button>
+        </div>
+        <button><i class="fas fa-user-circle" style="font-size:1.6rem;"></i></button>
+      </div>
+    </header>
+
+    <!-- قائمة الواجبات -->
+    <div class="assignments-list" id="assignmentsList">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><br>جاري تحميل الواجبات...</div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+    import {
+      getFirestore, collection, getDocs, addDoc, updateDoc, doc, query, where, orderBy, onSnapshot, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOBJ22snwOow8xfQnL2WmCusmyS8iWWlk",
+      authDomain: "educore-c3b42.firebaseapp.com",
+      projectId: "educore-c3b42",
+      storageBucket: "educore-c3b42.firebasestorage.app",
+      messagingSenderId: "750509780814",
+      appId: "1:750509780814:web:f57bddff39c7668b3cf81f",
+      measurementId: "G-LF317C03Q0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let STUDENT_ID = '';
+    const cloudName = "deaevfmvm";
+    const uploadPreset = "ml_default";
+    let currentSubmitAssignmentId = null;
+    let currentSubmitTeacherId = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) window.location.href = 'login.html';
+      else {
+        STUDENT_ID = user.uid;
+        document.body.classList.add('auth-ready');
+        loadAssignments();
+      }
+    });
+
+    // Mobile sidebar
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    document.getElementById('hamburgerBtn').addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('show'); });
+    overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+    document.querySelectorAll('.sidebar nav a').forEach(link => {
+      link.addEventListener('click', () => { if (window.innerWidth <= 768) { sidebar.classList.remove('open'); overlay.classList.remove('show'); } });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        signOut(auth).then(() => window.location.href = 'login.html');
+      }
+    });
+
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    async function loadAssignments() {
+      const listEl = document.getElementById('assignmentsList');
+      try {
+        // جلب جميع واجبات الطالب (مخزنة في students/{studentId}/assignments)
+        const assignmentsSnap = await getDocs(query(
+          collection(db, 'students', STUDENT_ID, 'assignments'),
+          orderBy('dueDate', 'asc')
+        ));
+
+        if (assignmentsSnap.empty) {
+          listEl.innerHTML = '<div class="empty-state"><i class="fas fa-tasks"></i><p>لا توجد واجبات حالياً</p></div>';
+          return;
+        }
+
+        const assignments = [];
+        assignmentsSnap.forEach(doc => assignments.push({ id: doc.id, ...doc.data() }));
+
+        // جلب تفاصيل إضافية لكل واجب (اسم المعلم، اسم الكورس)
+        for (const a of assignments) {
+          try {
+            if (a.teacherId) {
+              const prefsDoc = await getDoc(doc(db, 'teachers', a.teacherId, 'settings', 'preferences'));
+              if (prefsDoc.exists()) a.teacherName = prefsDoc.data().name || 'مدرس';
+            }
+            if (a.teacherId && a.courseId) {
+              const courseDoc = await getDoc(doc(db, 'teachers', a.teacherId, 'courses', a.courseId));
+              if (courseDoc.exists()) a.courseName = courseDoc.data().title || 'كورس';
+            }
+          } catch (e) {}
+        }
+
+        // دالة لتحديد الحالة
+        const getStatus = (a) => {
+          if (a.grade) return 'graded';
+          if (a.submittedAt) {
+            if (a.dueDate && new Date(a.submittedAt.seconds * 1000) > new Date(a.dueDate.seconds * 1000)) return 'late';
+            return 'submitted';
+          }
+          if (a.dueDate && new Date() > new Date(a.dueDate.seconds * 1000)) return 'late';
+          return 'pending';
+        };
+
+        listEl.innerHTML = assignments.map(a => {
+          const status = getStatus(a);
+          const statusLabels = { pending: 'قيد الانتظار', submitted: 'تم التسليم', graded: 'تم التقييم', late: 'متأخر' };
+          const statusClasses = { pending: 'status-pending', submitted: 'status-submitted', graded: 'status-graded', late: 'status-late' };
+          const dueDate = a.dueDate ? new Date(a.dueDate.seconds * 1000).toLocaleDateString('ar-EG') : '—';
+
+          return `
+            <div class="assignment-card">
+              <div class="assignment-header">
+                <div>
+                  <div class="assignment-title">${escapeHtml(a.title || 'واجب')}</div>
+                  <div style="font-size:0.8rem; color:#6b7d9c;">${escapeHtml(a.courseName || '')} · ${escapeHtml(a.teacherName || '')}</div>
+                </div>
+                <span class="assignment-status ${statusClasses[status]}">${statusLabels[status]}</span>
+              </div>
+              <div class="assignment-desc">${escapeHtml(a.description || 'لا يوجد وصف')}</div>
+              <div class="assignment-meta">
+                <span><i class="fas fa-calendar-alt"></i> تاريخ التسليم: ${dueDate}</span>
+              </div>
+              ${a.grade ? `
+                <div class="grade-display"><i class="fas fa-star"></i> الدرجة: ${a.grade}</div>
+              ` : ''}
+              ${!a.grade && !a.submittedAt ? `
+                <button class="btn btn-primary submit-btn" data-id="${a.id}" data-teacher="${a.teacherId || ''}">
+                  <i class="fas fa-cloud-upload-alt"></i> تسليم الواجب
+                </button>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+
+        // أزرار التسليم
+        listEl.querySelectorAll('.submit-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            currentSubmitAssignmentId = btn.dataset.id;
+            currentSubmitTeacherId = btn.dataset.teacher;
+            // فتح ودجت Cloudinary
+            if (!window.cloudinary) { showToast('Cloudinary غير محمل', 'error'); return; }
+            const widget = window.cloudinary.createUploadWidget({
+              cloudName, uploadPreset,
+              sources: ['local', 'url'],
+              multiple: false,
+              resourceType: 'auto',
+              folder: 'assignments',
+              maxFileSize: 50000000
+            }, async (error, result) => {
+              if (!error && result && result.event === "success") {
+                const fileUrl = result.info.secure_url;
+                try {
+                  await updateDoc(doc(db, 'students', STUDENT_ID, 'assignments', currentSubmitAssignmentId), {
+                    fileUrl,
+                    submittedAt: serverTimestamp()
+                  });
+                  // أيضاً نضيف تسليم في assignments الخاصة بالمعلم
+                  if (currentSubmitTeacherId && currentSubmitAssignmentId) {
+                    await addDoc(collection(db, 'teachers', currentSubmitTeacherId, 'assignments', currentSubmitAssignmentId, 'submissions'), {
+                      studentId: STUDENT_ID,
+                      studentName: auth.currentUser?.displayName || 'طالب',
+                      fileUrl,
+                      submissionDate: serverTimestamp()
+                    });
+                  }
+                  showToast('تم تسليم الواجب بنجاح!', 'success');
+                  loadAssignments();
+                } catch (e) {
+                  showToast('فشل حفظ التسليم', 'error');
+                }
+              }
+            });
+            widget.open();
+          });
+        });
+
+      } catch (error) {
+        listEl.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><br>فشل تحميل الواجبات</div>';
+        console.error(error);
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+    }
+
+    // اللغة والوضع الليلي
+    let lang = 'ar';
+    const langToggle = document.getElementById('langToggle');
+    const darkToggle = document.getElementById('darkToggle');
+    const langLabel = document.getElementById('langLabel');
+
+    const translations = {
+      ar: { dashboard: 'لوحة التحكم', teachers: 'المدرسون', courses: 'كورساتي', assignments: 'الواجبات', messages: 'الرسائل', profile: 'الملف الشخصي', settings: 'الإعدادات', logout: 'تسجيل الخروج', pageTitle: 'الواجبات' },
+      en: { dashboard: 'Dashboard', teachers: 'Teachers', courses: 'My Courses', assignments: 'Assignments', messages: 'Messages', profile: 'Profile', settings: 'Settings', logout: 'Logout', pageTitle: 'Assignments' }
+    };
+
+    function applyLanguage(langCode) {
+      const t = translations[langCode];
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (t[key]) el.textContent = t[key];
+      });
+      document.getElementById('pageTitle').textContent = t.pageTitle;
+    }
+
+    langToggle.addEventListener('click', () => {
+      lang = lang === 'ar' ? 'en' : 'ar';
+      langLabel.textContent = lang.toUpperCase();
+      applyLanguage(lang);
+    });
+
+    darkToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      darkToggle.innerHTML = document.body.classList.contains('dark-mode') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+
+    applyLanguage('ar');
+    console.log('✅ صفحة الواجبات جاهزة.');
+  </script>
+</body>
+</html>
